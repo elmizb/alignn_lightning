@@ -2,7 +2,7 @@ from typing import Literal
 from tqdm import tqdm
 import torch
 try:
-    from torch_geometric.loader import DataLoader
+    from torch_geometric.loader import DataLoader as DataLoader_pyg
 except:
     from torch.utils.data import DataLoader
 import pandas as pd
@@ -18,7 +18,8 @@ tqdm.pandas()
 class ALIGNNDataModule(pl.LightningDataModule):
     def __init__(
             self, 
-            data_dir: str = "path/to/dir", 
+            data_dir: str = "path/to/dir",
+            graph_fmt:Literal["dgl", "pyg"] = "dgl", 
             batch_size: int=config.batch_size,
             num_workers: int=config.num_workers,
             pin_memory: bool=config.pin_memory,
@@ -26,6 +27,7 @@ class ALIGNNDataModule(pl.LightningDataModule):
             ):
         super().__init__()
         self.data_dir = data_dir
+        self.graph_fmt = graph_fmt
         self.batch_size = batch_size
         self.num_workers = num_workers
         self.pin_memory = pin_memory
@@ -41,9 +43,28 @@ class ALIGNNDataModule(pl.LightningDataModule):
         if use_pandarallel:
             from pandarallel import pandarallel
             pandarallel.initialize(progress_bar=True)
-        get_structure_dataset(df_train, save=True, filename=self.data_dir+"train.data", use_pandarallel=use_pandarallel)
-        get_structure_dataset(df_valid, save=True, filename=self.data_dir+"valid.data", use_pandarallel=use_pandarallel)
-        get_structure_dataset(df_test, is_test=False, save=True, filename=self.data_dir+"test.data", use_pandarallel=use_pandarallel)
+        get_structure_dataset(
+            df_train, 
+            save=True, 
+            format=self.graph_fmt, 
+            filename=self.data_dir+"train.data", 
+            use_pandarallel=use_pandarallel
+            )
+        get_structure_dataset(
+            df_valid, 
+            save=True, 
+            format=self.graph_fmt, 
+            filename=self.data_dir+"valid.data", 
+            use_pandarallel=use_pandarallel
+            )
+        get_structure_dataset(
+            df_test, 
+            is_test=False, 
+            save=True, 
+            format=self.graph_fmt,
+            filename=self.data_dir+"test.data", 
+            use_pandarallel=use_pandarallel
+            )
         
     def setup(self, stage: str, minmax_scale: bool=False, standard_scale: bool=False):
         if stage == "fit":
@@ -90,35 +111,68 @@ class ALIGNNDataModule(pl.LightningDataModule):
                 pass
 
     def train_dataloader(self):
-        return DataLoader(
-            self.dataset_train,
-            batch_size=self.batch_size,
-            shuffle=self.shuffle,
-            collate_fn=self.collate_fn,
-            num_workers=self.num_workers,
-            pin_memory=self.pin_memory
-        )
+
+        if self.graph_fmt == "dgl":
+            return DataLoader(
+                self.dataset_train,
+                batch_size=self.batch_size,
+                shuffle=self.shuffle,
+                collate_fn=self.collate_fn,
+                num_workers=self.num_workers,
+                pin_memory=self.pin_memory
+            )
+        else:
+            return DataLoader_pyg(
+                self.dataset_train,
+                batch_size=self.batch_size,
+                shuffle=self.shuffle,
+                collate_fn=self.collate_fn,
+                num_workers=self.num_workers,
+                pin_memory=self.pin_memory
+            )
     
     def val_dataloader(self):
-        return DataLoader(
-            self.dataset_valid,
-            batch_size=self.batch_size,
-            shuffle=self.shuffle,
-            collate_fn=self.collate_fn,
-            num_workers=self.num_workers,
-            pin_memory=self.pin_memory
-        )
+        
+        if self.graph_fmt == "dgl":
+            return DataLoader(
+                self.dataset_valid,
+                batch_size=self.batch_size,
+                shuffle=self.shuffle,
+                collate_fn=self.collate_fn,
+                num_workers=self.num_workers,
+                pin_memory=self.pin_memory
+            )
+        else:
+            return DataLoader_pyg(
+                self.dataset_valid,
+                batch_size=self.batch_size,
+                shuffle=self.shuffle,
+                collate_fn=self.collate_fn,
+                num_workers=self.num_workers,
+                pin_memory=self.pin_memory
+            )
     
     def test_dataloader(self, batch_size=1):
-        return DataLoader(
-            self.dataset_test,
-            batch_size=batch_size,
-            shuffle=self.shuffle,
-            collate_fn=self.collate_fn,
-            num_workers=self.num_workers,
-            pin_memory=self.pin_memory
-        )
-
+        
+        if self.graph_fmt == "dgl":
+            return DataLoader(
+                self.dataset_test,
+                batch_size=self.batch_size,
+                shuffle=self.shuffle,
+                collate_fn=self.collate_fn,
+                num_workers=self.num_workers,
+                pin_memory=self.pin_memory
+            )
+        else:
+            return DataLoader_pyg(
+                self.dataset_test,
+                batch_size=self.batch_size,
+                shuffle=self.shuffle,
+                collate_fn=self.collate_fn,
+                num_workers=self.num_workers,
+                pin_memory=self.pin_memory
+            )
+        
 
 def get_structure_dataset(
     df: pd.DataFrame,
