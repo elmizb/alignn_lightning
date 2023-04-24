@@ -10,7 +10,8 @@ However, it is important to note that the implementation of the `alignn` layer w
 
 ## Usage
 
-To use the code in this repository, simply clone the repository and install the required packages. Then, you can run the scripts and modify them as needed to suit your specific use case.
+To use the code in this repository, simply clone the repository and install the required packages. Then, you can run the scripts and modify them as needed to suit your specific use case.  
+The simple use case of this codes are shown in alignn_pl_in_colab.ipynb. you can run the file in Google Colab. 
 
 ## Acknowledgments
 
