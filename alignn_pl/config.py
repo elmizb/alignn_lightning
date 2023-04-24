@@ -21,7 +21,7 @@ class ALIGNNConfig:
     # data configuration
     target: str = "formation_energy_peratom"
     atom_features: Literal["basic", "atomic_number", "cfid", "cgcnn"] = "cgcnn"
-    path_cgcnn_atominit = "./alignn_pyg/atom_init.json"
+    path_cgcnn_atominit = "./alignn_pl/atom_init.json"
     neighbor_strategy: Literal["k-nearest", "voronoi"] = "k-nearest"
     id_tag: Literal["jid", "id"] = "jid"
     structure_format: str = "atoms"#"cif"
