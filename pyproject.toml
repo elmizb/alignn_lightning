@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "alignn-pl"
+version = "0.1.0"
+description = ""
+authors = ["baukmilze"]
+readme = "README.md"
+packages = [{include = "alignn_pl"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+numpy = "^1.24.3"
+pandas = "^2.0.0"
+torch = "^2.0.0"
+dgl = "^1.0.1"
+lightning = "^2.0.1.post0"
+pandarallel = "^1.6.4"
+torch-geometric = "^2.3.0"
+pymatgen = "^2023.3.23"
+
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.22.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
