@@ -29,11 +29,11 @@ class StructureDataset(torch.utils.data.Dataset):
     def __init__(
         self,
         df: pd.DataFrame,
-        graphs: Sequence[Data],
+        graphs,
         target: str,
         is_test: bool = False, 
         transform=None,
-        line_graphs=Sequence[Data],
+        line_graphs=None,
         classification=False,
         id_tag="id",
     ):
