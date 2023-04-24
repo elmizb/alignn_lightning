@@ -370,8 +370,10 @@ def basic_node_attribute(element):
         tmp.append(getattr(element, f))
     return tmp
 
-def compute_bond_cosines(graph: Data) -> torch.tensor:
-    """Compute bond angle cosines from bond displacement vectors."""
+def compute_bond_cosines(graph) -> torch.tensor:
+    """Compute bond angle cosines from bond displacement vectors.
+    It's for pytorch_geometric graph data.
+    """
     # line graph edge: (a, b), (b, c)
     # `a -> b -> c`
     # use law of cosines to compute angles cosines
@@ -413,7 +415,7 @@ class Standardize(torch.nn.Module):
         self.mean = mean
         self.std = std
 
-    def forward(self, data: Data):
+    def forward(self, data):
         """Apply standardization to atom_features."""
         h = data.x
         data.x = (h - self.mean) / self.std
