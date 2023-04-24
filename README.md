@@ -15,4 +15,4 @@ The simple use case of this codes are shown in alignn_pl_in_colab.ipynb. you can
 
 ## Acknowledgments
 
-This repository is based on the `alignn` project from another repository. We would like to acknowledge the authors of the original project for their work and contributions.
+This repository is based on the `alignn` project from usnistgov repository. We would like to acknowledge the authors of the original project for their work and contributions.
