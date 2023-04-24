@@ -252,7 +252,6 @@ def get_structure_dataset(
         graphs=graphs,
         target=target,
         is_test=is_test,
-        transform=None,
         line_graphs=line_graph,
         classification=classification,
         id_tag=id_tag
