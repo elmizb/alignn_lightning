@@ -28,20 +28,18 @@ class StructureDataset(torch.utils.data.Dataset):
 
     def __init__(
         self,
-        df: pd.DataFrame,
-        graphs,
-        target: str,
-        is_test: bool = False, 
-        transform=None,
-        line_graphs=None,
-        classification=False,
+        df:pd.DataFrame,
+        graphs:pd.Series,
+        target:str,
+        is_test:bool = False, 
+        line_graphs:pd.Series =None,
+        classification:bool =False,
         id_tag="id",
     ):
         self.df = df
         self.graphs = graphs.reset_index(drop=True)
         self.line_graphs = line_graphs.reset_index(drop=True)
         self.ids = self.df[id_tag]
-        self.transform = transform
         self.is_test = is_test
 
         if not is_test:
@@ -66,9 +64,6 @@ class StructureDataset(torch.utils.data.Dataset):
         """Get StructureDataset sample."""
         g = self.graphs[idx]
 
-        if self.transform:
-            g = self.transform(g)
-
         if not self.is_test:
             label = self.labels[idx]
             if self.line_graphs.any():
@@ -81,22 +76,6 @@ class StructureDataset(torch.utils.data.Dataset):
                 return g, self.line_graphs[idx]
             else:
                 return g
-            
-    def setup_standardizer(self, ids):
-        """Atom-wise feature standardization transform."""
-        x = torch.cat(
-            [
-                g.x["atom_features"]
-                for idx, g in enumerate(self.graphs)
-                if idx in ids
-            ]
-        )
-        self.atom_feature_mean = x.mean(0)
-        self.atom_feature_std = x.std(0)
-
-        self.transform = Standardize(
-            self.atom_feature_mean, self.atom_feature_std
-        )
     
     @staticmethod
     def collate(samples: List[Tuple[dgl.DGLGraph, torch.Tensor]]):
@@ -440,7 +419,16 @@ class Standardize(torch.nn.Module):
         data.x = (h - self.mean) / self.std
         return data
     
-def gen_line_graph(g:Data)-> Data:
+def gen_line_graph(g):
+    """generate line graph for pytorch_geometric (graph) Data
+    The function to make line graph in pyg library is not for graph with redundant edges. 
+
+    Args:
+        g (pytorch_geometric.data.Data): original graph
+
+    Returns:
+        pytorch_geometric.data.Data: line graph
+    """
     u, v = g.edge_index
     l_src, l_dst = zip(*[(i, j) 
                       for i, dst in enumerate(v) 
@@ -453,7 +441,7 @@ def gen_line_graph(g:Data)-> Data:
     lg.edge_attr = compute_bond_cosines(lg)
     return lg
 
-def plot_graph(g:Data)-> None:
+def plot_graph(g)-> None:
     import matplotlib.pyplot as plt
     import networkx as nx
     from torch_geometric.utils import to_networkx 
