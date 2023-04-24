@@ -157,7 +157,7 @@ class ALIGNNDataModule(pl.LightningDataModule):
         if self.graph_fmt == "dgl":
             return DataLoader(
                 self.dataset_test,
-                batch_size=self.batch_size,
+                batch_size=batch_size,
                 shuffle=self.shuffle,
                 collate_fn=self.collate_fn,
                 num_workers=self.num_workers,
@@ -166,7 +166,7 @@ class ALIGNNDataModule(pl.LightningDataModule):
         else:
             return DataLoader_pyg(
                 self.dataset_test,
-                batch_size=self.batch_size,
+                batch_size=batch_size,
                 shuffle=self.shuffle,
                 collate_fn=self.collate_fn,
                 num_workers=self.num_workers,
