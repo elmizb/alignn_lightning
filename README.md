@@ -1,7 +1,6 @@
 # alignn_lightning
 ALIGNN gnn model with pytorch_lightning. it's totally based on https://github.com/usnistgov/alignn
-
-This repository contains a simplified version of the `alignn` project from another repository. The code in this repo is written using `pymatgen`, `pytorch_geometric`, and `pytorch_lightning`.
+The code in this repo is written using `pymatgen`, `pytorch_geometric`, and `pytorch_lightning`.
 
 ## Code Description
 
